@@ -4,6 +4,7 @@ Description=Radiopi
 [Service]
 Type=simple
 ExecStart=/usr/bin/radiopi
+User=pi
 
 [Install]
 WantedBy=multi-user.target
