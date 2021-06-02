@@ -1,2 +1,3 @@
 # radiopi
-A Raspberry Pi radio
+
+Some code to power a Raspberry Pi powered radio I built.
