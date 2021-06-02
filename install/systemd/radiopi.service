@@ -1,0 +1,9 @@
+[Unit]
+Description=Radiopi
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/radiopi
+
+[Install]
+WantedBy=multi-user.target
