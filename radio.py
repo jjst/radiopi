@@ -47,7 +47,15 @@ if __name__ == '__main__':
     init_config()
     stream_history = load_stream_history()
     try:
-        stream = sys.argv[1]
+        argument = sys.argv[1]
+        try:
+            stream_index = int(argument)
+            stream = stream_history[stream_index]
+        except IndexError:
+            print("Invalid stream history index")
+            sys.exit(1)
+        except ValueError:
+            stream = argument
     except IndexError:
         try:
             stream = stream_history[0]
