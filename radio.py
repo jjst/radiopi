@@ -6,10 +6,14 @@ import sys
 import os
 import shutil
 import tempfile
+from gpiozero import Button
+from signal import pause
 
 CONFIG_PATH = os.path.expanduser("~/.config/radiopi")
 STREAM_HISTORY_PATH = os.path.join(CONFIG_PATH, "history")
 DEFAULT_STREAM = "http://radiomeuh.ice.infomaniak.ch/radiomeuh-128.mp3"
+BUTTON_GPIO_PIN = "GPIO17"
+
 delay = 1
 
 def init_config():
@@ -21,6 +25,7 @@ class RadioPlayer:
 
     def __init__(self):
         self.stream_history = self._load_stream_history()
+        self._player_process = None
 
     def change_station(self, station):
         try:
@@ -54,7 +59,9 @@ class RadioPlayer:
             return None
 
     def wait(self):
-        return self._player_process.wait()
+        if self._player_process:
+            return self._player_process.wait()
+        return
 
     def _update_stream_history(self, stream_url):
         if not self.stream_history or stream != self.stream_history[0]:
@@ -83,7 +90,14 @@ if __name__ == '__main__':
     except IndexError:
         if player.current_stream() is None:
             player.change_station(DEFAULT_STREAM)
-    player.start()
+    try:
+        power_button = Button(BUTTON_GPIO_PIN)
+        if power_button.is_pressed:
+            player.start()
+        power_button.when_pressed = lambda: player.start()
+        power_button.when_released = lambda: player.stop()
+    except:
+        print("Failed to set up power button.")
     player.wait()
 
 
