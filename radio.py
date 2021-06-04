@@ -7,7 +7,7 @@ import os
 import shutil
 import tempfile
 from gpiozero import Button
-from signal import pause
+import signal
 
 CONFIG_PATH = os.path.expanduser("~/.config/radiopi")
 STREAM_HISTORY_PATH = os.path.join(CONFIG_PATH, "history")
@@ -98,7 +98,7 @@ if __name__ == '__main__':
         power_button.when_released = lambda: player.stop()
     except:
         print("Failed to set up power button.")
-    player.wait()
+    signal.pause()
 
 
 
