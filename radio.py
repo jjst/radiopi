@@ -81,10 +81,16 @@ class RadioPlayer:
         except FileNotFoundError:
             return []
 
+def print_history(player):
+    print("Stream history")
+    print("==============")
+    for idx, station in enumerate(player.stream_history):
+        print(f"[{idx}] {station}")
 
 if __name__ == '__main__':
     init_config()
     player = RadioPlayer()
+    print_history(player)
     try:
         station = sys.argv[1]
         player.change_station(station)
