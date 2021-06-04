@@ -47,7 +47,8 @@ class RadioPlayer:
         self._player_process = subprocess.Popen(args)
 
     def stop(self):
-        self._player_process.kill()
+        if self._player_process is not None:
+            self._player_process.kill()
 
     def is_running(self):
         return self._player_process is not None and self._player_process.poll() is None
