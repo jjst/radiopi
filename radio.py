@@ -16,51 +16,75 @@ def init_config():
     if not os.path.exists(CONFIG_PATH):
         os.makedirs(CONFIG_PATH)
 
-def load_stream_history():
-    try:
-        with open(STREAM_HISTORY_PATH, 'r') as history_file:
-            lines = history_file.read().splitlines()
-            return lines
-    except FileNotFoundError:
-        return []
 
-def update_stream_history(stream, history):
-    if not history or stream != history[0]:
-        new_history = [stream] + history
-        with tempfile.TemporaryDirectory() as tempdir:
-            new_history_file_path = os.path.join(tempdir, 'history')
-            with open(new_history_file_path, 'w') as new_history_file:
-                new_history_file.write('\n'.join(new_history))
-            shutil.move(new_history_file_path, STREAM_HISTORY_PATH)
+class RadioPlayer:
 
+    def __init__(self):
+        self.stream_history = self._load_stream_history()
 
-def vlc_main_loop(stream_url):
-    # Consider using the `backoff` library for better exponential retry delay
-    while True:
+    def change_station(self, station):
+        try:
+            index = int(station)
+            stream_url = self.stream_history[index]
+        except:
+            stream_url = station
+        was_running = self.is_running()
+        self.stop()
+        self._update_stream_history(stream_url)
+        if was_running:
+            self.start()
+
+    def start(self):
+        stream_url = self.current_stream()
+        print(f"Starting radio player.")
         print(f"Loading stream: {stream_url}")
-        subprocess.run(["cvlc", stream, "vlc://quit"])
-        print("Failed to open stream. Relaunching VLC after delay.")
-        time.sleep(delay)
+        args = ["cvlc", stream_url, "vlc://quit"]
+        self._player_process = subprocess.Popen(args)
+
+    def stop(self):
+        self._player_process.kill()
+
+    def is_running(self):
+        return self._player_process is not None and self._player_process.poll() is None
+
+    def current_stream(self):
+        if self.stream_history:
+            return self.stream_history[0]
+        else:
+            return None
+
+    def wait(self):
+        return self._player_process.wait()
+
+    def _update_stream_history(self, stream_url):
+        if not self.stream_history or stream != self.stream_history[0]:
+            self.stream_history = [stream] + self.stream_history
+            with tempfile.TemporaryDirectory() as tempdir:
+                new_history_file_path = os.path.join(tempdir, 'history')
+                with open(new_history_file_path, 'w') as new_history_file:
+                    new_history_file.write('\n'.join(self.stream_history))
+                shutil.move(new_history_file_path, STREAM_HISTORY_PATH)
+
+    def _load_stream_history(self):
+        try:
+            with open(STREAM_HISTORY_PATH, 'r') as history_file:
+                lines = history_file.read().splitlines()
+                return lines
+        except FileNotFoundError:
+            return []
 
 
 if __name__ == '__main__':
     init_config()
-    stream_history = load_stream_history()
+    player = RadioPlayer()
     try:
-        argument = sys.argv[1]
-        try:
-            stream_index = int(argument)
-            stream = stream_history[stream_index]
-        except IndexError:
-            print("Invalid stream history index")
-            sys.exit(1)
-        except ValueError:
-            stream = argument
+        station = sys.argv[1]
+        player.change_station(station)
     except IndexError:
-        try:
-            stream = stream_history[0]
-        except IndexError:
-            stream = DEFAULT_STREAM
+        if player.current_stream() is None:
+            player.change_station(DEFAULT_STREAM)
+    player.start()
+    player.wait()
 
-    update_stream_history(stream, stream_history)
-    vlc_main_loop(stream)
+
+
