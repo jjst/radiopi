@@ -65,8 +65,8 @@ class RadioPlayer:
         return
 
     def _update_stream_history(self, stream_url):
-        if not self.stream_history or stream != self.stream_history[0]:
-            self.stream_history = [stream] + self.stream_history
+        if not self.stream_history or stream_url != self.stream_history[0]:
+            self.stream_history = [stream_url] + self.stream_history
             with tempfile.TemporaryDirectory() as tempdir:
                 new_history_file_path = os.path.join(tempdir, 'history')
                 with open(new_history_file_path, 'w') as new_history_file:
@@ -99,6 +99,7 @@ if __name__ == '__main__':
         power_button.when_released = lambda: player.stop()
     except:
         print("Failed to set up power button.")
+        player.start()
     signal.pause()
 
 
