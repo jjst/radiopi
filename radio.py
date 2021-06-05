@@ -12,7 +12,8 @@ import signal
 CONFIG_PATH = os.path.expanduser("~/.config/radiopi")
 STREAM_HISTORY_PATH = os.path.join(CONFIG_PATH, "history")
 DEFAULT_STREAM = "http://radiomeuh.ice.infomaniak.ch/radiomeuh-128.mp3"
-BUTTON_GPIO_PIN = "GPIO16"
+
+BUTTON_GPIO_PIN = "GPIO16" # https://pinout.xyz/
 
 delay = 1
 
