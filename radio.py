@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import backoff
 import subprocess
 import time
 import sys
@@ -21,6 +22,8 @@ def init_config():
     if not os.path.exists(CONFIG_PATH):
         os.makedirs(CONFIG_PATH)
 
+class StreamPlayException(Exception):
+    pass
 
 class RadioPlayer:
 
@@ -40,12 +43,18 @@ class RadioPlayer:
         if was_running:
             self.start()
 
+    @backoff.on_exception(backoff.expo, StreamPlayException, max_time=60)
     def start(self):
         stream_url = self.current_stream()
         print(f"Starting radio player.")
         print(f"Loading stream: {stream_url}")
         args = ["cvlc", stream_url, "vlc://quit"]
         self._player_process = subprocess.Popen(args)
+        try:
+            self._player_process.wait(timeout=5)
+            raise StreamPlayException("Unable to play stream '{stream_url}'")
+        except subprocess.TimeoutExpired:
+            pass
 
     def stop(self):
         if self._player_process is not None:
