@@ -38,8 +38,9 @@ try:
     epd.init(epd.PART_UPDATE)
     num = 0
     while (True):
-        time_draw.rectangle((160, 100, 240, 115), fill = 255)
-        time_draw.text((120, 80), time.strftime('%H:%M'), font = font24, fill = 0)
+        x, y = 160, 100
+        time_draw.rectangle((x, y, 240, 115), fill = 255)
+        time_draw.text((x, y), time.strftime('%H:%M'), font = font24, fill = 0)
         epd.displayPartial(epd.getbuffer(time_image))
         num = num + 1
         if(num == 10):
