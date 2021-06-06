@@ -15,6 +15,11 @@ import traceback
 
 logging.basicConfig(level=logging.DEBUG)
 
+class Display():
+
+    def __init__(self):
+        pass
+
 try:
     epd = epd2in13_V2.EPD()
     logging.info("init and Clear")

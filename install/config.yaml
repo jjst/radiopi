@@ -1,0 +1,7 @@
+streams:
+  - name: Radio Meuh
+    url: http://radiomeuh.ice.infomaniak.ch/radiomeuh-128.mp3
+  - name: FIP Rock
+    url: https://icecast.radiofrance.fr/fiprock-midfi.mp3?id=radiofrance
+  - name: France Inter
+    url: http://direct.franceinter.fr/live/franceinter-midfi.mp3
