@@ -31,6 +31,7 @@ class Display():
         epd.init(epd.PART_UPDATE)
 
     def show_stream(self, stream_name):
+        logging.info(f"Updating display to show stream: {stream_name}")
         x, y = 0, 0
         epd = self._epd
         self._stream_draw.rectangle((x, y, 240, 115), fill = 255)
