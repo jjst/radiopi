@@ -49,7 +49,8 @@ class RadioPlayer():
     def set_stream(self, stream):
         index = int(stream)
         self._current_stream = self.streams[index]
-        self.display.show_stream(stream.name)
+        if self.display:
+            self.display.show_stream(stream.name)
         was_running = self.is_running()
         self.stop()
         # self._update_stream_history(stream)
@@ -134,9 +135,16 @@ def print_available_streams(player):
         print(style + text + colorama.Style.RESET_ALL)
     print("=================")
 
+def error(msg):
+    print(f"{colorama.Style.BRIGHT}{colorama.Fore.RED}{msg}{colorama.Style.RESET_ALL}")
+
 if __name__ == '__main__':
-    display = Display()
-    player = RadioPlayer()
+    try:
+        display = Display()
+    except OSError:
+        error("Failed to setup e-ink display.")
+        display = None
+    player = RadioPlayer(display)
     try:
         station = sys.argv[1]
         player.set_stream(station)
@@ -151,7 +159,7 @@ if __name__ == '__main__':
         power_button.when_pressed = lambda: player.start()
         power_button.when_released = lambda: player.stop()
     except:
-        print("Failed to set up power button.")
+        error("Failed to set up power button.")
         player.start()
     signal.pause()
 

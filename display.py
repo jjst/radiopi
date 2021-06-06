@@ -8,7 +8,6 @@ if os.path.exists(libdir):
     sys.path.append(libdir)
 
 import logging
-from waveshare_epd import epd2in13_V2
 import time
 from PIL import Image,ImageDraw,ImageFont
 import traceback
@@ -18,6 +17,7 @@ logging.basicConfig(level=logging.DEBUG)
 class Display():
 
     def __init__(self):
+        from waveshare_epd import epd2in13_V2
         epd = epd2in13_V2.EPD()
         self._epd = epd
         logging.info(f"Display dimensions: {epd.width}x{epd.height}")
