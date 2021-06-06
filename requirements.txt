@@ -5,6 +5,7 @@ chardet==4.0.0
 colorzero==2.0
 gpiozero==1.6.2
 idna==2.10
+Pillow==8.2.0
 pyradios==0.0.22
 requests==2.25.1
 urllib3==1.26.5
