@@ -30,6 +30,8 @@ try:
     image = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
     draw = ImageDraw.Draw(image)
 
+    time.sleep(2)
+
 
     # # partial update
     logging.info("4.show time...")
