@@ -3,6 +3,7 @@
 import sys
 import os
 libdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'lib')
+resources_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'resources')
 if os.path.exists(libdir):
     sys.path.append(libdir)
 
@@ -23,7 +24,7 @@ try:
     epd.Clear(0xFF)
 
     # Drawing on the image
-    font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+    font_path = os.path.join(resources_dir, 'Font.ttc')
     font24 = ImageFont.truetype(font_path, 24)
 
     logging.info("1.Drawing on the image...")
