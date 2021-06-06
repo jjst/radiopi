@@ -28,7 +28,7 @@ try:
     font24 = ImageFont.truetype(font_path, 24)
 
     # # partial update
-    logging.info("Display dimensions: {epd.width}x{epd.height}")
+    logging.info(f"Display dimensions: {epd.width}x{epd.height}")
     time_image = Image.new('1', (epd.height, epd.width), 255)
     time_draw = ImageDraw.Draw(time_image)
 
