@@ -27,13 +27,6 @@ try:
     font_path = os.path.join(resources_dir, 'Font.ttc')
     font24 = ImageFont.truetype(font_path, 24)
 
-    logging.info("1.Drawing on the image...")
-    image = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
-    draw = ImageDraw.Draw(image)
-
-    time.sleep(2)
-
-
     # # partial update
     logging.info("4.show time...")
     time_image = Image.new('1', (epd.height, epd.width), 255)
@@ -46,7 +39,7 @@ try:
     num = 0
     while (True):
         time_draw.rectangle((120, 80, 220, 105), fill = 255)
-        time_draw.text((120, 80), time.strftime('%H:%M:%S'), font = font24, fill = 0)
+        time_draw.text((120, 80), time.strftime('%H:%M'), font = font24, fill = 0)
         epd.displayPartial(epd.getbuffer(time_image))
         num = num + 1
         if(num == 10):
