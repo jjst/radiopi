@@ -37,6 +37,10 @@ class Display():
         self._stream_draw.text((x, y), stream_name, font = self._font, fill = 0)
         epd.displayPartial(epd.getbuffer(self._stream_img))
 
+    def turn_off(self):
+        epd = self._epd
+        epd.Clear(0xFF)
+
 
 
 if __name__ == "__main__":

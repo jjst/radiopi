@@ -49,7 +49,7 @@ class RadioPlayer():
     def set_stream(self, stream):
         index = int(stream)
         self._current_stream = self.streams[index]
-        if self.display:
+        if self.display and self.is_running():
             self.display.show_stream(self._current_stream.name)
         was_running = self.is_running()
         self.stop()
@@ -61,6 +61,8 @@ class RadioPlayer():
     def start(self):
         if not self.current_stream():
             raise StreamPlayException("No stream set, cannot start playing")
+        if self.display:
+            self.display.show_stream(self.current_stream().name)
         stream_url = self.current_stream().url
         print(f"Starting radio player.")
         print(f"Loading stream: {stream_url}")
@@ -73,6 +75,8 @@ class RadioPlayer():
             pass
 
     def stop(self):
+        if self.display:
+            self.display.turn_off()
         if self._player_process is not None:
             self._player_process.kill()
 
