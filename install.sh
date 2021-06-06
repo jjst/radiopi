@@ -9,5 +9,5 @@ sudo chmod 644 /etc/systemd/system/radiopi.service
 sudo systemctl enable radiopi
 echo "Copying default config..."
 mkdir -p "$CONFIG_PATH"
-cp -u "$PWD/install/config.yaml" "$CONFIG_PATH/config.yaml"
+cp -u "$PWD/install/default_streams.yaml" "$CONFIG_PATH/streams.yaml"
 echo "Install successful."

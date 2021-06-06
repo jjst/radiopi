@@ -37,7 +37,7 @@ class RadioPlayer():
         if not os.path.exists(CONFIG_PATH):
             os.makedirs(CONFIG_PATH)
         else:
-            with open(os.path.join(CONFIG_PATH, 'config.yaml'), 'r') as config_file:
+            with open(os.path.join(CONFIG_PATH, 'streams.yaml'), 'r') as config_file:
                 try:
                     parsed_yaml = yaml.safe_load(config_file)
                     self.streams = [Stream(**s) for s in parsed_yaml['streams']]
