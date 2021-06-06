@@ -47,12 +47,13 @@ class RadioPlayer():
                     print(exc)
 
     def set_stream(self, stream):
+        was_running = self.is_running()
+        if self._player_process is not None:
+            self._player_process.kill()
         index = int(stream)
         self._current_stream = self.streams[index]
         if self.display and self.is_running():
             self.display.show_stream(self._current_stream.name)
-        was_running = self.is_running()
-        self.stop()
         # self._update_stream_history(stream)
         if was_running:
             self.start()

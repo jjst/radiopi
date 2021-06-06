@@ -39,8 +39,10 @@ class Display():
         epd.displayPartial(epd.getbuffer(self._stream_img))
 
     def turn_off(self):
+        x, y = 0, 0
         epd = self._epd
-        epd.Clear(0xFF)
+        self._stream_draw.rectangle((x, y, 240, 115), fill = 255)
+        epd.displayPartial(epd.getbuffer(self._stream_img))
 
 
 
