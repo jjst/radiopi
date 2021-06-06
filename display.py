@@ -31,11 +31,14 @@ class Display():
         epd.init(epd.PART_UPDATE)
 
     def show_stream(self, stream_name):
+        epd = self._epd
+        draw = self._stream_draw
         logging.info(f"Updating display to show stream: {stream_name}")
         x, y = 0, 0
-        epd = self._epd
-        self._stream_draw.rectangle((x, y, 240, 115), fill = 255)
-        self._stream_draw.text((x, y), stream_name, font = self._font, fill = 0)
+        W, H = (epd.height, 30)
+        w, h = draw.textsize(stream_name, font=self._font)
+        draw.rectangle((x, y, W, H), fill = 255)
+        draw.text(((W-w)/2,(H-h)/2), stream_name, font = self._font, fill = 0)
         epd.displayPartial(epd.getbuffer(self._stream_img))
 
     def turn_off(self):
