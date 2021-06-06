@@ -23,7 +23,8 @@ try:
     epd.Clear(0xFF)
 
     # Drawing on the image
-    font24 = ImageFont.truetype('DejaVuSans.ttc', 24)
+    font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+    font24 = ImageFont.truetype(font_path, 24)
 
     logging.info("1.Drawing on the image...")
     image = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
