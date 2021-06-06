@@ -2,6 +2,7 @@
 
 import backoff
 import colorama
+from display import Display
 from collections import namedtuple
 import subprocess
 import time
@@ -28,7 +29,8 @@ Stream = namedtuple('Stream', ['name', 'url'])
 
 class RadioPlayer():
 
-    def __init__(self):
+    def __init__(self, display):
+        self.display = display
         self._current_stream = None
         self._player_process = None
         self._init_config()
@@ -47,6 +49,7 @@ class RadioPlayer():
     def set_stream(self, stream):
         index = int(stream)
         self._current_stream = self.streams[index]
+        self.display.show_stream(stream.name)
         was_running = self.is_running()
         self.stop()
         # self._update_stream_history(stream)
@@ -132,6 +135,7 @@ def print_available_streams(player):
     print("=================")
 
 if __name__ == '__main__':
+    display = Display()
     player = RadioPlayer()
     try:
         station = sys.argv[1]
