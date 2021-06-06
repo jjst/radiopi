@@ -32,9 +32,9 @@ class Display():
 
     def show_stream(self, stream_name):
         x, y = 0, 0
-        time_draw.rectangle((x, y, 240, 115), fill = 255)
-        time_draw.text((x, y), stream_name, font = self._font, fill = 0)
-        epd.displayPartial(epd.getbuffer(time_image))
+        self._stream_draw.rectangle((x, y, 240, 115), fill = 255)
+        self._stream_draw.text((x, y), stream_name, font = self._font, fill = 0)
+        epd.displayPartial(epd.getbuffer(self._stream_img))
 
 
 
