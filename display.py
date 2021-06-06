@@ -38,7 +38,7 @@ try:
     epd.init(epd.PART_UPDATE)
     num = 0
     while (True):
-        x, y = 160, 100
+        x, y = 180, 90
         time_draw.rectangle((x, y, 240, 115), fill = 255)
         time_draw.text((x, y), time.strftime('%H:%M'), font = font24, fill = 0)
         epd.displayPartial(epd.getbuffer(time_image))
