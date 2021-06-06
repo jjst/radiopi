@@ -24,7 +24,7 @@ class Display():
         epd.init(epd.FULL_UPDATE)
         epd.Clear(0xFF)
         font_path = os.path.join(resources_dir, 'Font.ttc')
-        self._font = ImageFont.truetype(font_path, 24)
+        self._font = ImageFont.truetype(font_path, 28)
         self._stream_img = Image.new('1', (epd.height, epd.width), 255)
         self._stream_draw = ImageDraw.Draw(self._stream_img)
         epd.displayPartBaseImage(epd.getbuffer(self._stream_img))
