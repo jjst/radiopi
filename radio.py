@@ -1,22 +1,21 @@
 #!/usr/bin/env python3
 
 import backoff
-import console
 from display import Display
 from collections import namedtuple
+import gpiozero
 import subprocess
 import sys
 import os
-import gpiozero
-from gpiozero import Button
 import signal
 import yaml
+
+import console
+import powerbutton
 
 
 CONFIG_PATH = os.path.expanduser("~/.config/radiopi")
 STREAM_HISTORY_PATH = os.path.join(CONFIG_PATH, "history")
-
-BUTTON_GPIO_PIN = "GPIO16"  # https://pinout.xyz/
 
 delay = 1
 
@@ -113,13 +112,9 @@ def main():
     except IndexError:
         if player.current_stream() is None:
             player.set_stream(0)
+    console.print_available_streams(player)
     try:
-        console.print_available_streams(player)
-        power_button = Button(BUTTON_GPIO_PIN)
-        if power_button.is_pressed:
-            player.start()
-        power_button.when_pressed = lambda: player.start()
-        power_button.when_released = lambda: player.stop()
+        power_button = powerbutton.PowerButton(player)
     except gpiozero.exc.BadPinFactory:
         console.error("Failed to set up power button.")
         player.start()
