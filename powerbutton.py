@@ -12,18 +12,23 @@ class PowerButton():
 
     def __init__(self, player, pin=BUTTON_GPIO_PIN):
         self.last_time_pressed = None
+        self.last_time_released = None
         self.button = Button(BUTTON_GPIO_PIN)
         self.player = player
         if self.button.is_pressed:
             self.player.start()
         self.button.when_pressed = lambda: self._when_pressed()
-        self.button.when_released = lambda: player.stop()
+        self.button.when_released = lambda: self._when_released()
+
+    def _when_released(self):
+        self.player.stop()
+        self.last_time_released = time.monotonic()
 
     def _when_pressed(self):
         time_pressed = time.monotonic()
         if self.last_time_pressed:
-            delta = time_pressed - self.last_time_pressed
-            print(self.last_time_pressed)
+            delta = time_pressed - self.last_time_released
+            print(self.last_time_released)
             print(time_pressed)
             print(delta)
             if delta < SHORT_PRESS_SECONDS:
