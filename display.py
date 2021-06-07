@@ -13,7 +13,7 @@ from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 import requests
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 class Display():
 
@@ -50,7 +50,7 @@ class Display():
         w, h = draw.textsize(stream.name, font=self._font)
         draw.rectangle((x, y, W, H), fill=255)
         draw.text(((W-w)/2, (H-h)/2), stream.name, font=self._font, fill=0)
-        epd.displayPartial(epd.getbuffer(self._stream_img))
+        epd.display(epd.getbuffer(self._stream_img))
 
     def turn_off(self):
         x, y = 0, 0
