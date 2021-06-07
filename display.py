@@ -28,8 +28,6 @@ class Display():
         self._font = ImageFont.truetype(font_path, 28)
         self._stream_img = Image.new('1', (epd.height, epd.width), 255)
         self._stream_draw = ImageDraw.Draw(self._stream_img)
-        epd.displayPartBaseImage(epd.getbuffer(self._stream_img))
-        epd.init(epd.PART_UPDATE)
 
     def show_stream(self, stream):
         epd = self._epd
@@ -38,11 +36,9 @@ class Display():
 
         # Show station favicon
         r = requests.get(stream.favicon, allow_redirects=True)
-        image1 = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
         favicon_image = Image.open(BytesIO(r.content))
         resized_favicon = favicon_image.resize((32, 32))
-        image1.paste(resized_favicon, (2, 2))
-        epd.display(epd.getbuffer(image1))
+        self._stream_img.paste(resized_favicon, (2, 2))
 
         # Show text with station name
         x, y = 0, 0
