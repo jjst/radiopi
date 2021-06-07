@@ -20,7 +20,13 @@ class PowerButton():
         self.button.when_released = lambda: player.stop()
 
     def _when_pressed(self):
-        if self.last_time_pressed and (time.monotonic() - self.last_time_pressed) < SHORT_PRESS_SECONDS:
-            print("Detected a short press")
-        self.last_time_pressed = time.monotonic()
+        time_pressed = time.monotonic()
+        if self.last_time_pressed:
+            delta = time_pressed - self.last_time_pressed
+            print(self.last_time_pressed)
+            print(time_pressed)
+            print(delta)
+            if delta < SHORT_PRESS_SECONDS:
+                print("Detected a short press")
+        self.last_time_pressed = time_pressed
         self.player.start()
