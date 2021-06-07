@@ -9,8 +9,9 @@ if os.path.exists(libdir):
 
 import logging
 import time
-from PIL import Image,ImageDraw,ImageFont
-import traceback
+from io import BytesIO
+from PIL import Image, ImageDraw, ImageFont
+import requests
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -30,21 +31,31 @@ class Display():
         epd.displayPartBaseImage(epd.getbuffer(self._stream_img))
         epd.init(epd.PART_UPDATE)
 
-    def show_stream(self, stream_name):
+    def show_stream(self, stream):
         epd = self._epd
         draw = self._stream_draw
-        logging.info(f"Updating display to show stream: {stream_name}")
+        logging.info(f"Updating display to show stream: {stream.name}")
+
+        # Show station favicon
+        r = requests.get(stream.favicon, allow_redirects=True)
+        image1 = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
+        favicon_image = Image.open(BytesIO(r.content))
+        resized_favicon = favicon_image.resize((32, 32))
+        image1.paste(resized_favicon, (2, 2))
+        epd.display(epd.getbuffer(image1))
+
+        # Show text with station name
         x, y = 0, 0
         W, H = (epd.height, 30)
-        w, h = draw.textsize(stream_name, font=self._font)
-        draw.rectangle((x, y, W, H), fill = 255)
-        draw.text(((W-w)/2,(H-h)/2), stream_name, font = self._font, fill = 0)
+        w, h = draw.textsize(stream, font=self._font)
+        draw.rectangle((x, y, W, H), fill=255)
+        draw.text(((W-w)/2, (H-h)/2), stream.name, font=self._font, fill=0)
         epd.displayPartial(epd.getbuffer(self._stream_img))
 
     def turn_off(self):
         x, y = 0, 0
         epd = self._epd
-        self._stream_draw.rectangle((x, y, 240, 115), fill = 255)
+        self._stream_draw.rectangle((x, y, 240, 115), fill=255)
         epd.displayPartial(epd.getbuffer(self._stream_img))
 
 

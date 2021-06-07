@@ -24,7 +24,7 @@ class StreamPlayException(Exception):
     pass
 
 
-Stream = namedtuple('Stream', ['name', 'url'])
+Stream = namedtuple('Stream', ['name', 'url', 'favicon'])
 
 
 class RadioPlayer():
@@ -84,7 +84,13 @@ class RadioPlayer():
 
 def get_available_streams():
     stations = [s for s in requests.get(f"{API_URL}/stations/fr").json()['items'] if s['streams']]
-    return [Stream(name=s['name'], url=s['streams'][0]['url']) for s in stations]
+    return [
+        Stream(
+            name=s['name'],
+            url=s['streams'][0]['url'],
+            favicon=s['favicon']
+        ) for s in stations
+    ]
 
 
 def main():
