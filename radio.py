@@ -52,7 +52,7 @@ class RadioPlayer():
         if not self.current_stream():
             raise StreamPlayException("No stream set, cannot start playing")
         if self.display:
-            self.display.show_stream(self.current_stream().name)
+            self.display.show_stream(self.current_stream())
         stream_url = self.current_stream().url
         print("Starting radio player.")
         print(f"Loading stream: {stream_url}")
