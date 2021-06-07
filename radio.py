@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 
 import backoff
-import colorama
+import console
 from display import Display
 from collections import namedtuple
 import subprocess
-import time
 import sys
 import os
-import shutil
-import tempfile
+import gpiozero
 from gpiozero import Button
 import signal
 import yaml
@@ -18,14 +16,17 @@ import yaml
 CONFIG_PATH = os.path.expanduser("~/.config/radiopi")
 STREAM_HISTORY_PATH = os.path.join(CONFIG_PATH, "history")
 
-BUTTON_GPIO_PIN = "GPIO16" # https://pinout.xyz/
+BUTTON_GPIO_PIN = "GPIO16"  # https://pinout.xyz/
 
 delay = 1
+
 
 class StreamPlayException(Exception):
     pass
 
+
 Stream = namedtuple('Stream', ['name', 'url'])
+
 
 class RadioPlayer():
 
@@ -65,7 +66,7 @@ class RadioPlayer():
         if self.display:
             self.display.show_stream(self.current_stream().name)
         stream_url = self.current_stream().url
-        print(f"Starting radio player.")
+        print("Starting radio player.")
         print(f"Loading stream: {stream_url}")
         args = ["cvlc", stream_url, "vlc://quit"]
         self._player_process = subprocess.Popen(args)
@@ -98,56 +99,12 @@ class RadioPlayer():
             return self._player_process.wait()
         return
 
-    """
-    def _update_stream_history(self, stream):
-        if not self.stream_history or stream != self.stream_history[0]:
-            self.stream_history = [stream] + self.stream_history
-            with tempfile.TemporaryDirectory() as tempdir:
-                new_history_file_path = os.path.join(tempdir, 'history')
-                with open(new_history_file_path, 'w') as new_history_file:
-                    new_history_file.write('\n'.join(self.stream_history))
-                shutil.move(new_history_file_path, STREAM_HISTORY_PATH)
-    
-    
 
-    def _load_stream_history(self):
-        try:
-            with open(STREAM_HISTORY_PATH, 'r') as history_file:
-                lines = history_file.read().splitlines()
-                streams = []
-                for l in lines:
-                    try:
-                        name, url = l.split(" ")
-                        streams.append(Stream(name=name, url=url))
-                    except ValueError:
-                        streams.append(Stream(name=None, url=url))
-                return streams
-        except FileNotFoundError:
-            return []
-    """
-
-def print_available_streams(player):
-    print(f"{colorama.Style.BRIGHT}{colorama.Fore.GREEN}Welcome to RadioPi!{colorama.Style.RESET_ALL}")
-    print("Available streams")
-    print("=================")
-    for idx, stream in enumerate(player.streams):
-        if stream.name == player.current_stream().name:
-            style = colorama.Style.BRIGHT
-            text = f"[{idx}] {stream.name} - {stream.url} [currently listening]"
-        else:
-            style = colorama.Style.DIM
-            text = f"[{idx}] {stream.name} - {stream.url}"
-        print(style + text + colorama.Style.RESET_ALL)
-    print("=================")
-
-def error(msg):
-    print(f"{colorama.Style.BRIGHT}{colorama.Fore.RED}{msg}{colorama.Style.RESET_ALL}")
-
-if __name__ == '__main__':
+def main():
     try:
         display = Display()
     except OSError:
-        error("Failed to setup e-ink display.")
+        console.error("Failed to setup e-ink display.")
         display = None
     player = RadioPlayer(display)
     try:
@@ -157,16 +114,17 @@ if __name__ == '__main__':
         if player.current_stream() is None:
             player.set_stream(0)
     try:
-        print_available_streams(player)
+        console.print_available_streams(player)
         power_button = Button(BUTTON_GPIO_PIN)
         if power_button.is_pressed:
             player.start()
         power_button.when_pressed = lambda: player.start()
         power_button.when_released = lambda: player.stop()
-    except:
-        error("Failed to set up power button.")
+    except gpiozero.exc.BadPinFactory:
+        console.error("Failed to set up power button.")
         player.start()
     signal.pause()
 
 
-
+if __name__ == '__main__':
+    main()
