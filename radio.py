@@ -7,6 +7,7 @@ import gpiozero
 import subprocess
 import sys
 import os
+import requests
 import signal
 import yaml
 
@@ -16,8 +17,7 @@ import powerbutton
 
 CONFIG_PATH = os.path.expanduser("~/.config/radiopi")
 STREAM_HISTORY_PATH = os.path.join(CONFIG_PATH, "history")
-
-delay = 1
+API_URL = os.environ.get("RADIO_API_URL", "https://now-playing-42nq5.ondigitalocean.app/api")
 
 
 class StreamPlayException(Exception):
@@ -29,22 +29,11 @@ Stream = namedtuple('Stream', ['name', 'url'])
 
 class RadioPlayer():
 
-    def __init__(self, display):
+    def __init__(self, streams, display):
         self.display = display
         self._current_stream = None
         self._player_process = None
-        self._init_config()
-
-    def _init_config(self):
-        if not os.path.exists(CONFIG_PATH):
-            os.makedirs(CONFIG_PATH)
-        else:
-            with open(os.path.join(CONFIG_PATH, 'streams.yaml'), 'r') as config_file:
-                try:
-                    parsed_yaml = yaml.safe_load(config_file)
-                    self.streams = [Stream(**s) for s in parsed_yaml['streams']]
-                except yaml.YAMLError as exc:
-                    print(exc)
+        self.streams = streams
 
     def set_stream(self, stream):
         was_running = self.is_running()
@@ -86,12 +75,6 @@ class RadioPlayer():
 
     def current_stream(self):
         return self._current_stream
-        """
-        if self.stream_history:
-            return self.stream_history[0]
-        else:
-            return None
-        """
 
     def wait(self):
         if self._player_process:
@@ -99,13 +82,19 @@ class RadioPlayer():
         return
 
 
+def get_available_streams():
+    stations = [s for s in requests.get(f"{API_URL}/stations/fr").json()['items'] if s['streams']]
+    return [Stream(name=s['name'], url=s['streams'][0]['url']) for s in stations]
+
+
 def main():
+    streams = get_available_streams()
     try:
         display = Display()
     except OSError:
         console.error("Failed to setup e-ink display.")
         display = None
-    player = RadioPlayer(display)
+    player = RadioPlayer(streams, display)
     try:
         station = sys.argv[1]
         player.set_stream(station)

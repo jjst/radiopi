@@ -1,5 +1,6 @@
 import gpiozero
 from gpiozero import Button
+import warnings
 
 
 BUTTON_GPIO_PIN = "GPIO16"  # https://pinout.xyz/
@@ -9,7 +10,9 @@ SHORT_PRESS_SECONDS = 1
 class PowerButton():
 
     def __init__(self, player, pin=BUTTON_GPIO_PIN):
-        self.button = Button(BUTTON_GPIO_PIN)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            self.button = Button(BUTTON_GPIO_PIN)
         self.player = player
         if self.button.is_pressed:
             self.player.start()
