@@ -47,7 +47,7 @@ class Display():
         # Show text with station name
         x, y = 0, 0
         W, H = (epd.height, 30)
-        w, h = draw.textsize(stream, font=self._font)
+        w, h = draw.textsize(stream.name, font=self._font)
         draw.rectangle((x, y, W, H), fill=255)
         draw.text(((W-w)/2, (H-h)/2), stream.name, font=self._font, fill=0)
         epd.displayPartial(epd.getbuffer(self._stream_img))
