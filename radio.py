@@ -83,7 +83,7 @@ class RadioPlayer():
 
 
 def get_available_streams():
-    stations = [s for s in requests.get(f"{API_URL}/stations").json()['items'] if 'streams' in s and 'favicon' in s]
+    stations = [s for s in requests.get(f"{API_URL}/stations").json()['items'] if 'streams' in s and 'favicon' in s and s['streams']]
     streams = [
         Stream(
             name=s['name'],
